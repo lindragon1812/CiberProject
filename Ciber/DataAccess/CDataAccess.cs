@@ -8,9 +8,9 @@ namespace Ciber.DataAccess
 {
     public class CDataAccess : IDataAccess
     {
-        public Task<IEnumerable<dynamic>> QueryAsync(IDbConnection cnn, string sql)
+        public async Task<IEnumerable<T>> QueryAsync<T>(IDbConnection connection, string sql)
         {
-            return null;
+            return await connection.QueryAsync<T>(sql);
         }
     }
 }

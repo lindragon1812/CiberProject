@@ -8,40 +8,57 @@ using Ciber.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using Ciber.DataAccess;
+using NSubstitute.ExceptionExtensions;
+using System;
+
 
 namespace CiberTest
 {
     public class CRepositoryTest
     {
+        
+        protected IDapperContext context;
+        protected IDataAccess dataAccess;
+        protected IDbConnection connection;
         [SetUp]
         public void Setup()
         {
-
+            context = Substitute.For<IDapperContext>();
+            dataAccess = Substitute.For<IDataAccess>();
+            connection = Substitute.For<IDbConnection>();
         }
 
         [Test]
-        public void CRepository_GetOrder_ReturnAll()
+        [TestCaseSource(typeof(CRepositoryTestHelper), nameof(CRepositoryTestHelper.Test))]
+        public void CRepository_GetOrder_QueryEmpty(string testCase, List<OrderDTO> returnResult, string query)
         {
             //Arrange
-            string query = "";
-            List<OrderDTO> returnResult = new List<OrderDTO>();
-            IDapperContext context = Substitute.For<IDapperContext>();
-            IDbConnection connection = Substitute.For<IDbConnection>();
-
             context.CreateConnection().Returns(connection);
-            //connection.QueryAsync<OderDTO>(query).Returns(returnResult);
-            var repository = Substitute.ForPartsOf<CRepository>(context);
-            repository.GetQueryAsync(connection, query).Returns(returnResult);
+            dataAccess.QueryAsync<OrderDTO>(connection, query).Returns(returnResult);
+            var repository = Substitute.ForPartsOf<CRepository>(context, dataAccess);
 
+            //Action
             var result = repository.GetOrder().GetAwaiter().GetResult();
-
-            Assert.IsTrue(result.Count() == 0);
-
-
-
-
-
+            //Assert
+            Assert.IsTrue(returnResult.Count() == 0);
 
         }
+        [Test]
+        [TestCaseSource(typeof(CRepositoryTestHelper), nameof(CRepositoryTestHelper.TestHaveData))]
+        public void CRepository_GetOrder_QueryHaveData(string testCase, List<OrderDTO> returnResult, string query)
+        {
+            //Arrange
+            context.CreateConnection().Returns(connection);
+            dataAccess.QueryAsync<OrderDTO>(connection, query).Returns(returnResult);
+            var repository = Substitute.ForPartsOf<CRepository>(context, dataAccess);
+
+            //Action
+            var result = repository.GetOrder().GetAwaiter().GetResult();
+            //Assert
+            Assert.IsInstanceOf(typeof(List<OrderDTO>),result);
+
+        }
+
     }
 }

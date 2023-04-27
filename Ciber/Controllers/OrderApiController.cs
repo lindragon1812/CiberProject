@@ -1,4 +1,5 @@
-﻿using Ciber.Models;
+﻿using Ciber.DataAccess;
+using Ciber.Models;
 using Ciber.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,7 @@ namespace Ciber.Controllers
        
         private readonly IRepository _companyRepo;
         private readonly ILogger _logger;
+        
 
         public OrderApiController(IRepository companyRepo, ILogger<OrderApiController> logger)
         {
@@ -96,10 +98,10 @@ namespace Ciber.Controllers
         {
             try
             {
-                var companies = await _companyRepo.GetOrder();
+                var order = await _companyRepo.GetOrder();
 
 
-                return Ok(companies);
+                return Ok(order);
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
 ﻿using Ciber.Context;
+using Ciber.DataAccess;
 using Ciber.Models;
 using Dapper;
 using System.Collections.Generic;
@@ -11,9 +12,11 @@ namespace Ciber.Repository
     public class CRepository : IRepository
     {
         private readonly IDapperContext _context;
-        public CRepository(IDapperContext context)
+        private readonly IDataAccess _dataAccess;
+        public CRepository(IDapperContext context, IDataAccess dataAccess)
         {
             _context = context;
+            _dataAccess = dataAccess;
         }
         /// <summary>
         /// Lấy danh mục
@@ -59,22 +62,30 @@ namespace Ciber.Repository
         /// Lấy tất cả order
         /// </summary>
         /// <returns></returns>
-        public virtual async Task<IEnumerable<OrderDTO>> GetOrder()
+        public virtual async Task<List<OrderDTO>> GetOrder()
         {
-            var query = "SELECT o.OrderId,t.ProductName,ct.CategoryName,c.CustomerName,o.CreatedDate, o.Amount FROM `order` o " +
-                "INNER JOIN customer c ON c.CustomerId = o.CustomerId " +
-                "INNER JOIN product t ON t.ProductId = o.ProductId " +
-                "INNER JOIN category ct ON ct.CategoryId = t.CategoryId";
-            using (var connection = _context.CreateConnection())
+            List<OrderDTO> order = new List<OrderDTO>();
+            try
             {
-                var companies = await this.GetQueryAsync(connection,query);
-                return companies;
+                var query = "SELECT o.OrderId,t.ProductName,ct.CategoryName,c.CustomerName,o.CreatedDate, o.Amount FROM `order` o " +
+                    "INNER JOIN customer c ON c.CustomerId = o.CustomerId " +
+                    "INNER JOIN product t ON t.ProductId = o.ProductId " +
+                    "INNER JOIN category ct ON ct.CategoryId = t.CategoryId";
+                using (var connection = _context.CreateConnection())
+                {
+                    order = (await _dataAccess.QueryAsync<OrderDTO>(connection, query)).ToList();
+                   
+                }
             }
+            catch (System.Exception ex)
+            {
+                return order;
+            }
+          
+            return order;
+
         }
-        public virtual async Task<List<OrderDTO>> GetQueryAsync(IDbConnection conn, string query)
-        {
-            return (await conn.QueryAsync<OrderDTO>(query)).ToList();
-        }
+
         /// <summary>
         /// Đặt hàng
         /// </summary>
@@ -115,7 +126,7 @@ namespace Ciber.Repository
                     Message = "Amount could not exceed quantity remaining of product"
                 };
 
-                }
+            }
             return result;
         }
         /// <summary>
@@ -127,10 +138,10 @@ namespace Ciber.Repository
         {
             var result = false;
             var query = "SELECT * FROM product p WHERE p.ProductId = @ProductId;";
-            
+
             using (var connection = _context.CreateConnection())
             {
-                var product = await connection.QueryFirstAsync<Product>(query, new {param.ProductId});
+                var product = await connection.QueryFirstAsync<Product>(query, new { param.ProductId });
                 result = (param.Amount ?? 0) <= (product?.Quantity ?? 0);
             }
             return result;
