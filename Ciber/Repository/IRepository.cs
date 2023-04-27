@@ -11,9 +11,9 @@ namespace Ciber.Repository
         public Task<IEnumerable<Product>> GetProduct();
         public Task<IEnumerable<Customer>> GetCustomer();
 
-        public Task<IEnumerable<OrderDTO>> GetOrder();
+        public Task<List<OrderDTO>> GetOrder();
         public Task<ServiceResult> OrderProduct(Order param);
 
-        public Task<List<OrderDTO>> GetQueryAsync(IDbConnection conn, string query);
+        
     }
 }
