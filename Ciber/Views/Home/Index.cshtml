@@ -1,0 +1,98 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="table-container">
+    <table id="example" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Category Name</th>
+                <th>Customer Name</th>
+                <th>Order Date</th>
+                <th>Amount</th>
+
+            </tr>
+        </thead>
+        <tbody class="table-body">
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Age</th>
+                <th>Start date</th>
+
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<div class="footer-container">
+    <button id="btnOrder" type="button" class="btn btn-secondary">Create New Order</button>
+</div>
+<div class="modal-dialog" id="myModal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4>Create New Order</h4>
+            <span class="close">&times;</span>
+        </div>
+        <div class="row order-row">
+            <div class="col-3 lbl-input">Order Name</div>
+            <div class="col-9">
+                <input class="form-control order-input" type="text" placeholder="Type your order name here">
+            </div>
+        </div>
+        <div class="row product-row">
+            <div class="col-3 lbl-input">Product Name</div>
+            <div class="col-9">
+                @*<input class="form-control order-input" type="text" placeholder="Type your product name here">*@
+
+
+                <select class="form-select product-select" id="productSelect" aria-label="">
+                    
+                 
+                </select>
+
+            </div>
+        </div>
+        <div class="row customer-row">
+            <div class="col-3 lbl-input">Customer Name</div>
+            <div class="col-9">
+                <select class="form-select customer-select" id="customerSelect" aria-label="">
+                </select>
+
+            </div>
+        </div>
+        <div class="row date-created-row">
+            <div class="col-3 lbl-input">Order Date</div>
+            <div class="col-9">
+                <input id="formOrderDate" class="form-control order-input" type="date" placeholder="__/__/____">
+            </div>
+        </div>
+        <div class="row amount-row">
+            <div class="col-3 lbl-input">Amount</div>
+            <div class="col-9">
+                <input id="formAmount" class="form-control order-input" type="number" placeholder="">
+            </div>
+        </div>
+        <div class="footer-modal">
+            <button id="btnCreateOrder" type="button" class="btn btn-secondary">Create Order</button>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+
+
+@*
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+
+*@
